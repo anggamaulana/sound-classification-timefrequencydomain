@@ -7,7 +7,7 @@ from scipy.io import wavfile
 import numpy as np
 
 
-numframe=20
+numframe=25
 numfreqframe=5
 numtime=2*1000
 
@@ -19,7 +19,7 @@ def convertFFT(amplitude,sampF):
 	# print n
 	# print p
 	data=[]
-	
+
 	nUniquePts = int(ceil((n+1)/2.0))
 	p = p[0:nUniquePts]
 	p = abs(p)
@@ -68,7 +68,7 @@ def convertFFT(amplitude,sampF):
 
 
 
-def convertToDomainFreq(file):
+def convertToDomainFreq(file,multichannel=1):
 	data=[]
 	sampFreq, snd = wavfile.read(file)
 	# print snd.dtype
@@ -82,7 +82,11 @@ def convertToDomainFreq(file):
 	# print sampFreq
 	# print"======================="
 
-	s1=snd[:,0]
+	s1=[]
+	if multichannel==1:
+		s1=snd[:,0]
+	else:
+		s1=snd[:]
 
 
 	timeArray = arange(0,totalamplitude,1)
@@ -111,7 +115,8 @@ def xls(data):
 	xlss=""
 	for dt in data:
 		for dta in dt:
-			xlss+=str(dta)+","
+			nilai = round(dta,2)
+			xlss+=str(nilai)+","
 		xlss+="\n"
 	xlss+="\n\n\n"
 	return xlss
@@ -171,7 +176,11 @@ xl+=xls(data7)
 # TESTING
 # MULAI KLASIFIKASI INPUT (OPERASI KNN)---
 # HITUNG DISTANCE TIAP DATA TRAINING DENGAN INPUT
-test = convertToDomainFreq('Cow3.wav')
+
+xl+="test,\n"
+test = convertToDomainFreq('sheep_test1.wav',0)
+xl+=xls(test)
+
 jarak1=euclidean(np.array(test).flatten(),np.array(data1).flatten())
 jarak2=euclidean(np.array(test).flatten(),np.array(data2).flatten())
 jarak3=euclidean(np.array(test).flatten(),np.array(data3).flatten())
@@ -203,7 +212,14 @@ print kelas(datajarak[3],dtjr)
 print kelas(datajarak[4],dtjr)
 print kelas(datajarak[5],dtjr)
 print kelas(datajarak[6],dtjr)
-
+print "jarak terdekat"
+print datajarak[0]
+print datajarak[1]
+print datajarak[2]
+print datajarak[3]
+print datajarak[4]
+print datajarak[5]
+print datajarak[6]
 
 file = open('sound.csv','w')
 file.write(xl)
